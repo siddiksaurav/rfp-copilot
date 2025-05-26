@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.rfp.copilot.component;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
