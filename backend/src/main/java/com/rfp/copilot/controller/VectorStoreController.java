@@ -1,6 +1,8 @@
 package com.rfp.copilot.controller;
 
 import com.rfp.copilot.component.DataLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.Objects;
 
 @Controller
 public class VectorStoreController {
+    private static final Logger logger = LoggerFactory.getLogger(VectorStoreController.class);
 
     private final DataLoader dataLoader;
 
@@ -34,11 +37,12 @@ public class VectorStoreController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("name") String sourceName
     ) {
+        logger.info("uploading pdf file: {}", sourceName);
         try {
             byte[] pdfBytes = file.getBytes();
             Resource pdfResource = new ByteArrayResource(pdfBytes);
-
             dataLoader.loadPdfToVectorStore(pdfResource, sourceName);
+            logger.info("PDF uploaded and added to vector store");
 
             return ResponseEntity.ok("PDF uploaded and added to vector store");
         } catch (IOException e) {

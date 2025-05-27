@@ -1,18 +1,18 @@
 package com.rfp.copilot.controller;
 
 import com.rfp.copilot.service.TorFilteringService;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TorFilteringController {
+    private static final Logger logger = LoggerFactory.getLogger(TorFilteringController.class);
     private final TorFilteringService torFilteringService;
 
-    public TorFilteringController(TorFilteringService torFilteringService, @Qualifier("openAiChatModel") ChatModel chatModel, VectorStore vectorStore) {
+    public TorFilteringController(TorFilteringService torFilteringService) {
         this.torFilteringService = torFilteringService;
     }
 
@@ -21,8 +21,11 @@ public class TorFilteringController {
             @RequestParam(value = "question", defaultValue = "Give a welcome message") String question,
             @RequestParam(value = "source", required = false) String sourceFilter
     ) {
+        logger.info("starting tor filtering for source: {}", sourceFilter);
+
         String result = torFilteringService.analyzeTorSuitability(sourceFilter);
-        System.out.println("response:"+result);
+        logger.info("final tor filtering: {}", result);
+
         return result;
     }
 

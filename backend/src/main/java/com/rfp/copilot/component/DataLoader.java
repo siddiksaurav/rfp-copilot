@@ -1,5 +1,6 @@
 package com.rfp.copilot.component;
 
+import com.rfp.copilot.constants.Constants;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +19,13 @@ import java.util.Map;
 
 @Component
 public class DataLoader {
-    private  static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
+
     private final VectorStore vectorStore;
     private final JdbcClient jdbcClient;
 
-    // List multiple PDF resources
-    @Value("classpath:/EMPDATA.pdf")
-    private Resource empDataPdf;
+    @Value("classpath:/rfp_document_banbeis.pdf")
+    private Resource dataPdf;
 
     public DataLoader(VectorStore vectorStore, JdbcClient jdbcClient) {
         this.vectorStore = vectorStore;
@@ -34,11 +35,10 @@ public class DataLoader {
 
     @PostConstruct
     public void init() {
-//        jdbcClient.sql("DELETE FROM vector_store").update();
-        Integer count = jdbcClient.sql("select count(*) from vector_store").query(Integer.class).single();
+        Integer count = jdbcClient.sql(Constants.EMPTY_VECTOR_DB_CHECK_QUERY).query(Integer.class).single();
         if (count == 0) {
             logger.info("No vector store found");
-            loadPdfToVectorStore(empDataPdf, "EMPDATA.pdf");
+            loadPdfToVectorStore(dataPdf, "rfp_document_benbeis.pdf");
             logger.info("Loaded all PDFs into vector store");
         }
     }
@@ -48,19 +48,15 @@ public class DataLoader {
                 .withPagesPerDocument(1)
                 .build();
         PagePdfDocumentReader reader = new PagePdfDocumentReader(pdfResource, config);
-
-
-        var textSplitter = new TokenTextSplitter();
-
         List<Document> pages = reader.get();
 
+        var textSplitter = new TokenTextSplitter();
         List<Document> splitDocs = textSplitter.apply(pages);
         List<Document> docsWithMetadata = splitDocs.stream()
                 .map(doc -> new Document(doc.getFormattedContent(), Map.of("source", sourceName)))
                 .toList();
 
         vectorStore.accept(docsWithMetadata);
-
         logger.info("Loaded PDF: {}", sourceName);
     }
 }
