@@ -1,4 +1,3 @@
-
 package com.rfp.copilot.configuration;
 
 import org.springframework.ai.chat.model.ChatModel;

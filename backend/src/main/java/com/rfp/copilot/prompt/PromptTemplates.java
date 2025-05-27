@@ -1,6 +1,6 @@
 package com.rfp.copilot.prompt;
 
-public class PromptTemplate {
+public class PromptTemplates {
 
     public static String getTimeLineInfoPrompt() {
         return """
@@ -42,6 +42,12 @@ public class PromptTemplate {
                - Composition of key personnel (e.g., Project Manager, Full Stack Developer, Software Engineer, iOS Developer, Tester)
                - Any prior relevant project experience or case studies.
            """;
+    }
+
+    public static String getRequirementChatPrompt() {
+        return """
+            You are a good assistant who has access to RAG database of Term of Reference. Provide a detailed response to the user question:
+        """;
     }
 
 
