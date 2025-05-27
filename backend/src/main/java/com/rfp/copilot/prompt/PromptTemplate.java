@@ -33,5 +33,11 @@ public class PromptTemplate {
            """;
     }
 
+    public static String getWorkSchedulePrompt() {
+        return """
+                Based on the Terms of Reference in the RFP, extract all mentioned software modules, components, and key functional features required for the proposed solution. Focus only on technical deliverables and grouped features if listed.
+        """;
+    }
+
 
 }
