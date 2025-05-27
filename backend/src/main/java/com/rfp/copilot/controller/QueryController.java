@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -40,15 +41,16 @@ public class QueryController {
     }
 
     @GetMapping("/ask")
-    public String simplify(@RequestParam(value = "question",
-            defaultValue = "List all the Articles in the Indian Constitution")
-                           String question) {
+    public String simplify(
+            @RequestParam(value = "question", defaultValue = "List all the Articles in the Indian Constitution") String question,
+            @RequestParam(value = "source", required = false) String sourceFilter
+    ) {
 
         PromptTemplate template
                 = new PromptTemplate(prompt);
         Map<String, Object> promptsParameters = new HashMap<>();
         promptsParameters.put("input", question);
-        promptsParameters.put("documents", findSimilarData(question));
+        promptsParameters.put("documents", findSimilarData(question, sourceFilter != null ? sourceFilter : "EMPDATA.pdf"));
 
         String response =  chatModel
                 .call(template.create(promptsParameters))
@@ -59,16 +61,19 @@ public class QueryController {
         return response;
     }
 
-    private String findSimilarData(String question) {
+    private String findSimilarData(String question, String sourceFilter) {
         List<Document> documents;
         SearchRequest searchRequest = SearchRequest.builder().query(question).topK(5).build();
 
         documents = vectorStore.similaritySearch(searchRequest);
 
-        return documents
+        return Objects.requireNonNull(documents)
                 .stream()
+                .filter(doc -> {
+                    Map<String, Object> metadata = doc.getMetadata();
+                    return metadata.get("source") != null && metadata.get("source").equals(sourceFilter);
+                })
                 .map(Document::getFormattedContent)
                 .collect(Collectors.joining());
-
     }
 }
