@@ -1,6 +1,8 @@
 package com.rfp.copilot.service;
 
-import com.rfp.copilot.prompt.PromptTemplate;
+import com.rfp.copilot.prompt.PromptTemplates;
+import com.rfp.copilot.prompt.PromptType;
+import org.slf4j.Logger;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class DocumentProcessingService {
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(DocumentProcessingService.class);
 
     private final VectorStore vectorStore;
 
@@ -19,18 +22,14 @@ public class DocumentProcessingService {
         this.vectorStore = vectorStore;
     }
 
-    public String extractTimelineInformation(String sourceFilter) {
-        String prompt = PromptTemplate.getTimeLineInfoPrompt();
-        return extractRelevantContent(sourceFilter, prompt);
-    }
-
-    public String extractTechnicalRequirements(String sourceFilter) {
-        String prompt = PromptTemplate.getTechnicalInfoPrompt();
-        return extractRelevantContent(sourceFilter, prompt);
-    }
-
-    public String extractRequirementGatherPrompt(String sourceFilter) {
-        String prompt = PromptTemplate.generateRequirementGatherPrompt();
+    public String extractByPromptType(String sourceFilter, PromptType type) {
+        String prompt = switch (type) {
+            case TIMELINE -> PromptTemplates.getTimeLineInfoPrompt();
+            case TECHNICAL -> PromptTemplates.getTechnicalInfoPrompt();
+            case REQUIREMENT_GATHER -> PromptTemplates.generateRequirementGatherPrompt();
+            case FEATURE -> PromptTemplates.getWorkSchedulePrompt();
+        };
+        logger.info("extracting relevant content for prompt: {}", prompt);
         return extractRelevantContent(sourceFilter, prompt);
     }
 
@@ -50,11 +49,5 @@ public class DocumentProcessingService {
                 .collect(Collectors.joining());
     }
 
-
-    public String extractFeatureInformation(String sourceFilter) {
-        String prompt = PromptTemplate.getWorkSchedulePrompt();
-        return extractRelevantContent(sourceFilter, prompt);
-
-    }
 }
 
