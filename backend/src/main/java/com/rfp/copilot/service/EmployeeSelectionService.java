@@ -1,7 +1,7 @@
 package com.rfp.copilot.service;
 
 import com.rfp.copilot.entity.Employee;
-import com.rfp.copilot.prompt.PromptTemplate;
+import com.rfp.copilot.prompt.PromptTemplates;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.ai.chat.model.ChatModel;
@@ -48,7 +48,7 @@ public class EmployeeSelectionService {
     }
 
     public List<Employee> fetchEmployees() {
-        String experiences = extractExperiencesFromTor("Dummy", PromptTemplate.generateExperienceAndTeamCompositionPrompt());
+        String experiences = extractExperiencesFromTor("Dummy", PromptTemplates.generateExperienceAndTeamCompositionPrompt());
 
         System.out.println("########### Experiences ############");
         System.out.println(experiences);
