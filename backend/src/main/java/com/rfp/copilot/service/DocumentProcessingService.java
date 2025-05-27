@@ -49,5 +49,11 @@ public class DocumentProcessingService {
                 .collect(Collectors.joining());
     }
 
+
+    public String extractFeatureInformation(String sourceFilter) {
+        String prompt = PromptTemplates.getWorkSchedulePrompt();
+        return extractRelevantContent(sourceFilter, prompt);
+
+    }
 }
 

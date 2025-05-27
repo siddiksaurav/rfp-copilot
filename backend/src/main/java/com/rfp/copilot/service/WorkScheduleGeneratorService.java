@@ -1,7 +1,6 @@
 package com.rfp.copilot.service;
 
 import com.rfp.copilot.constants.Constants;
-import com.rfp.copilot.prompt.PromptType;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,7 +16,7 @@ public class WorkScheduleGeneratorService {
         this.llmService = llmService;
     }
     public String createWorkSchedule(String sourceFilter) {
-        String moduleInformation = documentService.extractByPromptType(sourceFilter, PromptType.FEATURE);
+        String moduleInformation = documentService.extractFeatureInformation(sourceFilter);
         String previousWorkSchedule = Constants.WORK_SCHEDULE_DATA;
 
         Map<String, Object> analysisData = new HashMap<>();
@@ -25,6 +24,7 @@ public class WorkScheduleGeneratorService {
         analysisData.put("previousWorkSchedule", previousWorkSchedule);
 
         String prompt = generateWorkScheduleGeneratePrompt(analysisData);
+
         return llmService.generateResponse(prompt);
     }
 

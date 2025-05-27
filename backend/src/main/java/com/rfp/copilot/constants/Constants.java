@@ -127,5 +127,4 @@ public class Constants {
     public static final String EMPTY_VECTOR_DB_CHECK_QUERY = "select count(*) from vector_store";
 
     public static final String DELETE_VECTOR_DB = "DELETE FROM vector_store";
-
 }
