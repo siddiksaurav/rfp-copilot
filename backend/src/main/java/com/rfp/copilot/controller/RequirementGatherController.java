@@ -17,9 +17,10 @@ public class RequirementGatherController {
 
     @GetMapping("/gather-requirement")
     public String gatherRequirement(
-            @RequestParam(value = "source", required = false) String sourceFilter
+            @RequestParam(value = "source", required = false) String sourceFilter,
+            @RequestParam(value = "sectionNumber", required = false) int sectionNumber
     ) {
-        String result = requirementGatherService.analyzeTorSuitability(sourceFilter);
+        String result = requirementGatherService.analyzeTorSuitability(sourceFilter, sectionNumber);
         System.out.println("response:" + result);
         return result;
     }

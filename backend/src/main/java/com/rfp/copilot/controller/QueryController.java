@@ -5,6 +5,8 @@ import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.Filter;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,7 +47,6 @@ public class QueryController {
             @RequestParam(value = "question", defaultValue = "Give a welcome message") String question,
             @RequestParam(value = "source", required = false) String sourceFilter
     ) {
-
         PromptTemplate template
                 = new PromptTemplate(prompt);
         Map<String, Object> promptsParameters = new HashMap<>();
@@ -63,16 +64,26 @@ public class QueryController {
 
     private String findSimilarData(String question, String sourceFilter) {
         List<Document> documents;
-        SearchRequest searchRequest = SearchRequest.builder().query(question).topK(10).build();
+
+        FilterExpressionBuilder builder = new FilterExpressionBuilder();
+//        Filter.Expression filter = builder.and(
+//                builder.eq("author", "John Doe"),
+//                builder.in("genre", "fiction", "sci-fi")
+//        ).build();
+        Filter.Expression filter = builder.eq("source", sourceFilter).build();
+
+        SearchRequest searchRequest = SearchRequest.builder().query(question).topK(100)
+                .filterExpression(filter)
+                .build();
 
         documents = vectorStore.similaritySearch(searchRequest);
 
         return Objects.requireNonNull(documents)
                 .stream()
-                .filter(doc -> {
-                    Map<String, Object> metadata = doc.getMetadata();
-                    return metadata.get("source") != null && metadata.get("source").equals(sourceFilter);
-                })
+//                .filter(doc -> {
+//                    Map<String, Object> metadata = doc.getMetadata();
+//                    return metadata.get("source") != null && metadata.get("source").equals(sourceFilter);
+//                })
                 .map(Document::getFormattedContent)
                 .collect(Collectors.joining());
     }
