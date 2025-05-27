@@ -9,10 +9,12 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String position;
 
     private String name;
-
-    private String position;
+    private String phone;
+    private String email;
+    private String location;
 
     @Column(name = "academic_qualification")
     private String academicQualification;
