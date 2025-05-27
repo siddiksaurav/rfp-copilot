@@ -10,28 +10,26 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.rfp.copilot.entity.Employee;
-import com.rfp.copilot.repository.EmployeeRepository;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CVGenerationService {
-    private final EmployeeRepository employeeRepository;
     private final ChatModel chatModel;
+    private final EmployeeSelectionService employeeSelectionService;
 
-    public CVGenerationService(EmployeeRepository employeeRepository,
-                               ChatModel chatModel) {
-        this.employeeRepository = employeeRepository;
+    public CVGenerationService(ChatModel chatModel,
+                               EmployeeSelectionService employeeSelectionService) {
         this.chatModel = chatModel;
+        this.employeeSelectionService = employeeSelectionService;
     }
 
     public List<String> generateCv() {
-        List<Employee> employees = employeeRepository.findTop3Employee();
-        List<String> responses = new ArrayList<>();
+        List<Employee> employees = employeeSelectionService.fetchEmployees();
+        StringBuilder combinedCvs = new StringBuilder();
 
         for (Employee employee : employees) {
             String prompt = String.format("""
@@ -62,76 +60,16 @@ public class CVGenerationService {
             );
 
             String response = chatModel.call(prompt);
-
-            // Optional: Generate a dynamic file name using employee name or ID
-            String fileName = "generated_cv_" + employee.getId() + ".pdf";
-
-            // Save the response as a PDF file
-            saveCvAsPdf(response, fileName);
-
-            responses.add(response);
+            combinedCvs.append(response).append("\n\n---------------------------------------------\n\n");
+        }
+        // Generate a single PDF with all CVs
+        if (!combinedCvs.isEmpty()) {
+            String fileName = "selective_employees_cv.pdf";
+            saveCvAsPdf(combinedCvs.toString(), fileName);
         }
 
-        return responses;
+        return List.of(combinedCvs.toString());
     }
-
-
-    /*public String generateCv () {
-        List<Employee> employees = employeeRepository.findTop3Employee();
-
-        Employee employee = new Employee();
-        employee.setId(1L);
-        employee.setName("Brian Smith");
-        employee.setPhone("01703998648");
-        employee.setEmail("example@gmail.com");
-        employee.setLocation("Dhaka");
-        employee.setPosition("Software Engineer");
-        employee.setAcademicQualification("Masters of Science");
-        employee.setSubject("ICT");
-        employee.setExperience(3);
-        employee.setSkills("Spring boot, react, Android");
-        employee.setCertification("CMMI 1");
-        employee.setExperienceDetails(
-                "Organization: Coffey-Gonzalez; Duration: 2018-05-03 to 2019-11-25; " +
-                "Languages: Bengali; Responsibilities: Report increase politics relate garden today. " +
-                "Image according while day future. End its let."
-        );
-
-
-        String prompt = String.format("""
-            Create a professional CV based on the following information. No need to use any extra info. Use only the available content. Remove markup tag:
-            Name: %s
-            Phone: %s
-            Email: %s
-            Location: %s
-            Position: %s
-            Academic Qualification: %s
-            Subject: %s
-            Experience: %s
-            Skills: %s
-            Certification: %s
-            Experience Details: %s
-            """,
-                employee.getName(),
-                employee.getPhone(),
-                employee.getEmail(),
-                employee.getLocation(),
-                employee.getPosition(),
-                employee.getAcademicQualification(),
-                employee.getSubject(),
-                employee.getExperience(),
-                employee.getSkills(),
-                employee.getCertification(),
-                employee.getExperienceDetails()
-        );
-
-        String response = chatModel.call(prompt);
-
-        //save pdf
-        saveCvAsPdf(response, "generated_cv.pdf");
-
-        return response;
-    }*/
 
     private void saveCvAsPdf(String cvContent, String fileName) {
         try {
