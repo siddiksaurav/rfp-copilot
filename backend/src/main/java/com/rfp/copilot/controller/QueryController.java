@@ -42,7 +42,7 @@ public class QueryController {
 
     @GetMapping("/ask")
     public String simplify(
-            @RequestParam(value = "question", defaultValue = "List all the Articles in the Indian Constitution") String question,
+            @RequestParam(value = "question", defaultValue = "Give a welcome message") String question,
             @RequestParam(value = "source", required = false) String sourceFilter
     ) {
 
