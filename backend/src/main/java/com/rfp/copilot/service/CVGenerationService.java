@@ -15,6 +15,8 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CVGenerationService {
@@ -26,7 +28,56 @@ public class CVGenerationService {
         this.employeeRepository = employeeRepository;
         this.chatModel = chatModel;
     }
-    public String generateCv () {
+
+    public List<String> generateCv() {
+        List<Employee> employees = employeeRepository.findTop3Employee();
+        List<String> responses = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            String prompt = String.format("""
+            Create a professional CV based on the following information. No need to use any extra info. Use only the available content. Remove markup tag:
+            Name: %s
+            Phone: %s
+            Email: %s
+            Location: %s
+            Position: %s
+            Academic Qualification: %s
+            Subject: %s
+            Experience: %s
+            Skills: %s
+            Certification: %s
+            Experience Details: %s
+            """,
+                    employee.getName(),
+                    employee.getPhone(),
+                    employee.getEmail(),
+                    employee.getLocation(),
+                    employee.getPosition(),
+                    employee.getAcademicQualification(),
+                    employee.getSubject(),
+                    employee.getExperience(),
+                    employee.getSkills(),
+                    employee.getCertification(),
+                    employee.getExperienceDetails()
+            );
+
+            String response = chatModel.call(prompt);
+
+            // Optional: Generate a dynamic file name using employee name or ID
+            String fileName = "generated_cv_" + employee.getId() + ".pdf";
+
+            // Save the response as a PDF file
+            saveCvAsPdf(response, fileName);
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+
+    /*public String generateCv () {
+        List<Employee> employees = employeeRepository.findTop3Employee();
 
         Employee employee = new Employee();
         employee.setId(1L);
@@ -80,7 +131,7 @@ public class CVGenerationService {
         saveCvAsPdf(response, "generated_cv.pdf");
 
         return response;
-    }
+    }*/
 
     private void saveCvAsPdf(String cvContent, String fileName) {
         try {
