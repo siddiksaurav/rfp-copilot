@@ -20,7 +20,7 @@ public class LlmService {
     public String generateResponse(String prompt) {
         PromptTemplate template
                 = new PromptTemplate(prompt);
-        String response =  chatModel
+        String response = chatModel
                 .call(template.create())
                 .getResult()
                 .getOutput().toString();

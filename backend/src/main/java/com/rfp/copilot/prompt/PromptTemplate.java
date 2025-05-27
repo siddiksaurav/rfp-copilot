@@ -18,4 +18,20 @@ public class PromptTemplate {
         """;
     }
 
+    public static String generateRequirementGatherPrompt() {
+        return """
+           Retrieve all relevant parts of the RFP that contain:
+
+           - Required documents or submission formats
+           - Technical specifications or implementation details
+           - Project timeline, milestones, or deadlines
+           - Evaluation and scoring criteria
+           - Legal, compliance, or administrative conditions
+           - Any section that is referenced by others (e.g., “See Section 5”, “Refer to PDS”)
+
+           Prioritize sections that contain actionable proposal-related instructions.
+           """;
+    }
+
+
 }
