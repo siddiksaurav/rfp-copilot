@@ -123,4 +123,6 @@ public class Constants {
             "a. Periodic Maintenance Report – Months: 40–45\n" +
             "b. Maintenance Completion Report (at end of maintenance period) – Month: 45\n" +
             "\n";
+
+    public static final String EMPTY_VECTOR_DB_CHECK_QUERY = "select count(*) from vector_store";
 }

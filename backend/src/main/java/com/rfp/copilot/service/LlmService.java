@@ -18,14 +18,15 @@ public class LlmService {
     }
 
     public String generateResponse(String prompt) {
-        PromptTemplate template
-                = new PromptTemplate(prompt);
+        logger.info("LLM prompt: {} " , prompt);
+
+        PromptTemplate template = new PromptTemplate(prompt);
         String response = chatModel
                 .call(template.create())
                 .getResult()
                 .getOutput().toString();
 
-        logger.info("LLM response: " + response);
+        logger.info("LLM response: {} " , response);
         return response;
     }
 }
