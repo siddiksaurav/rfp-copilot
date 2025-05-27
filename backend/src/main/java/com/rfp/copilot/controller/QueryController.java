@@ -63,7 +63,7 @@ public class QueryController {
 
     private String findSimilarData(String question, String sourceFilter) {
         List<Document> documents;
-        SearchRequest searchRequest = SearchRequest.builder().query(question).topK(5).build();
+        SearchRequest searchRequest = SearchRequest.builder().query(question).topK(10).build();
 
         documents = vectorStore.similaritySearch(searchRequest);
 

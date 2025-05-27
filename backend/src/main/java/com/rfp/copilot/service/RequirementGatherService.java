@@ -1,6 +1,5 @@
 package com.rfp.copilot.service;
 
-import com.rfp.copilot.constants.Constants;
 import com.rfp.copilot.dto.BidDecision;
 import org.springframework.stereotype.Service;
 
@@ -8,57 +7,72 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class TorFilteringService {
+public class RequirementGatherService {
 
     private final DocumentProcessingService documentService;
     private final LlmService llmService;
 
-    public TorFilteringService(DocumentProcessingService documentService, LlmService llmService) {
+    public RequirementGatherService(DocumentProcessingService documentService, LlmService llmService) {
         this.documentService = documentService;
         this.llmService = llmService;
     }
 
     public String analyzeTorSuitability(String sourceFilter) {
-
         String technicalRequirements = documentService.extractTechnicalRequirements(sourceFilter);
-        String timelineInfo = documentService.extractTimelineInformation(sourceFilter);
-        String companyCapabilities = Constants.COMPANY_PROFILE_INFORMATION;
 
         // Prepare data for LLM analysis
         Map<String, Object> analysisData = new HashMap<>();
-        analysisData.put("technicalRequirements", technicalRequirements);
-        analysisData.put("timelineInfo", timelineInfo);
-        analysisData.put("companyCapabilities", companyCapabilities);
+        analysisData.put("requirements", technicalRequirements);
 
         String prompt = generateAnalysisPrompt(analysisData);
 
         return llmService.generateResponse(prompt);
     }
+
     public String generateAnalysisPrompt(Map<String, Object> analysisData) {
         return """
-        TOR Technical Requirements:
-        %s
-
-        TOR Timeline Info:
-        %s
-
-        Company Profile:
-        %s
-
-        Based on the technical requirements, timeline, and company capabilities,
-        determine whether the company should bid on this TOR. Consider:
-        - Does the company have sufficient expertise in the required technologies?
-        - Is the proposed project timeline realistic based on project complexity?
-        - Are any critical skills or domain experiences missing?
-
-        Respond with a BidDecision (YES or NO) and short reasoning.
-        """.formatted(
-                analysisData.get("technicalRequirements"),
-                analysisData.get("timelineInfo"),
-                analysisData.get("companyProfile")
+                       TOR Technical Requirements:
+                       %s
+                
+                       From the full RFP content provided below, extract and organize all important requirements, items, and conditions.
+                
+                       ✅ Identify all required formats, documents, deliverables, and evaluation criteria — from any section of the RFP. \s
+                       📌 If any part refers to another section (e.g., “see Section 5”, “refer to PDS”), include those referenced details **only if they appear in the provided context**. \s
+                       🧠 Group the extracted points clearly by category to assist in writing a compliant and complete proposal.
+                
+                       📋 After the structured output, provide an additional section listing **any potentially missing or unclear points** that might require clarification or follow-up with the issuing authority.
+                
+                       Return the output in the following format:
+                
+                       ---
+                
+                       ### Required Documents
+                       - ...
+                
+                       ### Technical Requirements
+                       - ...
+                
+                       ### Timeline & Milestones
+                       - ...
+                
+                       ### Evaluation Criteria
+                       - ...
+                
+                       ### Compliance / Legal / Other Conditions
+                       - ...
+                
+                       ---
+                
+                       ### ⚠️ Possible Missing or Unclear Points
+                       - [e.g., “No budget breakdown instructions provided.”]
+                       - [e.g., “Timeline for deliverables not clearly defined.”]
+                
+                       ❗Only use information present in the RFP context. Do not hallucinate or invent missing parts, but you may flag potential gaps for review.
+                
+                """.formatted(
+                analysisData.get("requirements")
         );
     }
-
 
 
 //    private String generateAnalysisPrompt(Map<String, Object> analysisData) {
@@ -114,7 +128,7 @@ public class TorFilteringService {
 //
 //        return promptBuilder.toString();
 //    }
-    
+
     /**
      * Parses the LLM response into a structured BidDecision object
      */
@@ -123,10 +137,10 @@ public class TorFilteringService {
             // Here you would implement JSON parsing of the LLM response
             // For simplicity, this is a placeholder
             // In a real implementation, use a JSON library like Jackson
-            
+
             BidDecision decision = new BidDecision();
             // Parse JSON from llmResponse and populate decision object
-            
+
             return decision;
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse LLM response", e);

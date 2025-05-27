@@ -7,8 +7,6 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,7 +29,12 @@ public class DocumentProcessingService {
         return extractRelevantContent(sourceFilter, prompt);
     }
 
-    private String extractRelevantContent(String sourceFilter, String prompt) {
+    public String extractRequirementGatherPrompt(String sourceFilter) {
+        String prompt = PromptTemplate.generateRequirementGatherPrompt();
+        return extractRelevantContent(sourceFilter, prompt);
+    }
+
+    public String extractRelevantContent(String sourceFilter, String prompt) {
         SearchRequest searchRequest = SearchRequest.builder()
                 .query(prompt)
                 .topK(5)
