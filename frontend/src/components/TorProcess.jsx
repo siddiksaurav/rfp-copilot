@@ -188,7 +188,7 @@ export default function TorProcessTable({ torQueue }) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-900">TOR Processing Results</h2>
+        <h2 className="text-2xl font-semibold text-white">TOR Processing Results</h2>
         {torQueue && torQueue.length > 0 && (
           <button
             onClick={processAllTors}
