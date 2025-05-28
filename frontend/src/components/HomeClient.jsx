@@ -4,8 +4,23 @@ import {motion} from 'framer-motion';
 import {Button} from '../../components/ui/button';
 import {UploadCloud} from 'lucide-react';
 import TorProcessTable from './TorProcess';
+import {useRef, useState} from "react";
 
-export default function TorClientSection({ torQueue }) {
+export default function TorClientSection({ torQueue = [] }) {
+    const [selectedFile, setSelectedFile] = useState(null);
+    const fileInputRef = useRef(null);
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+    };
+
     return (
         <div className="max-w-6xl mx-auto space-y-8">
             <div className="text-center space-y-4">
@@ -39,14 +54,27 @@ export default function TorClientSection({ torQueue }) {
                         <h2 className="text-xl font-semibold text-white">Document Processing Queue</h2>
                     </div>
 
-                    <Button variant="outline" className="text-gray-800 border-gray-600 hover:bg-gray-400 cursor-pointer">
-                        <UploadCloud className="w-4 h-4 mr-2" />
-                        Upload TOR
-                    </Button>
+                    <div>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            accept=".pdf"
+                        />
+                        <Button
+                            variant="outline"
+                            className="text-gray-800 border-gray-600 hover:bg-gray-500 cursor-pointer"
+                            onClick={handleUploadClick}
+                        >
+                            <UploadCloud className="w-4 h-4 mr-2" />
+                            Upload TOR
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="p-6">
-                    <TorProcessTable torQueue={torQueue} />
+                    <TorProcessTable initialQueue={torQueue} file={selectedFile} />
                 </div>
             </motion.div>
         </div>
