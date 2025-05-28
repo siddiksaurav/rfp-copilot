@@ -47,12 +47,13 @@ public class PromptTemplates {
 
     public static String generateExperienceAndTeamCompositionPrompt() {
         return """
-               - Spring boot, UI/UX, Fullstack, Tester, Mobile Developer
-               - Professional experience of the organization or team members. Professional staff qualifications and competence
-               - Role definitions and responsibilities"
-               - Years of experience required
-               - Composition of key personnel (e.g., Project Manager, Full Stack Developer, Software Engineer, iOS Developer, Tester)
-               - Any prior relevant project experience or case studies.
+               You are a goog assistant who has access to RAG database of Term of Reference. Provide me key experiences and team compositions.
+                   - Spring boot, UI/UX, Fullstack, Tester, Mobile Developer
+                   - Professional experience of the organization or team members. Professional staff qualifications and competence
+                   - Role definitions and responsibilities"
+                   - Years of experience required
+                   - Composition of key personnel (e.g., Project Manager, Full Stack Developer, Software Engineer, iOS Developer, Tester)
+                   - Any prior relevant project experience or case studies.
            """;
     }
 
