@@ -64,9 +64,6 @@ public class CVGenerationService {
             String response = chatModel.call(prompt);
             combinedCvs.append(response).append("\n\n---------------------------------------------\n\n");
 
-            if (index == 3) {
-                break;
-            }
             index++;
         }
         // Generate a single PDF with all CVs

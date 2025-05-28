@@ -66,6 +66,7 @@ public class EmployeeSelectionService {
         5. Use appropriate WHERE clauses to filter data when needed.
         6. Use ORDER BY, GROUP BY, or aggregation functions when appropriate.
         7. Fetch full employee entity
+        8. Fetch maximum 3 employees
         USER QUESTION: "%s"
     """.formatted(schema, experiences);
 
