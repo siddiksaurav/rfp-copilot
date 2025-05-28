@@ -113,7 +113,7 @@ export default function GatherRequirementClient({ torName }) {
   }, [torName]);
 
   return (
-      <>
+      <div className="min-h-screen p-8 bg-gray-900">
         <FloatingChat/>
         <div className="max-w-4xl mx-auto p-6">
           <div className="bg-white shadow-lg rounded-lg">
@@ -236,6 +236,6 @@ export default function GatherRequirementClient({ torName }) {
             </div>
           </div>
         </div>
-      </>
+      </div>
   );
 }
