@@ -27,14 +27,15 @@ public class CVGenerationService {
         this.employeeSelectionService = employeeSelectionService;
     }
 
-    public List<String> generateCv() {
-        List<Employee> employees = employeeSelectionService.fetchEmployees();
+    public List<String> generateCv(String sourceFilter) {
+        List<Employee> employees = employeeSelectionService.fetchEmployees(sourceFilter);
         StringBuilder combinedCvs = new StringBuilder();
 
+        int index = 1;
         for (Employee employee : employees) {
             String prompt = String.format("""
             Create a professional CV based on the following information. No need to use any extra info. Use only the available content. Remove markup tag:
-            Name: %s
+            %d: Name: %s
             Phone: %s
             Email: %s
             Location: %s
@@ -46,6 +47,7 @@ public class CVGenerationService {
             Certification: %s
             Experience Details: %s
             """,
+                    index,
                     employee.getName(),
                     employee.getPhone(),
                     employee.getEmail(),
@@ -61,6 +63,11 @@ public class CVGenerationService {
 
             String response = chatModel.call(prompt);
             combinedCvs.append(response).append("\n\n---------------------------------------------\n\n");
+
+            if (index == 3) {
+                break;
+            }
+            index++;
         }
         // Generate a single PDF with all CVs
         if (!combinedCvs.isEmpty()) {
