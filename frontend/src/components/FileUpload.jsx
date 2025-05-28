@@ -1,36 +1,30 @@
 'use client';
 
-import { useState, ChangeEvent, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-interface ValidationResult {
-  item: string;
-  valid: boolean;
-  reason?: string;
-}
-
 export default function FileUpload() {
-  const [file, setFile] = useState<File | null>(null);
-  const [validationResults, setValidationResults] = useState<ValidationResult[]>([]);
+  const [file, setFile] = useState(null);
+  const [validationResults, setValidationResults] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
+  const handleDragEnter = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -47,7 +41,7 @@ export default function FileUpload() {
     }
   }, []);
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event) => {
     setError(null);
     if (event.target.files?.[0]) {
       setFile(event.target.files[0]);

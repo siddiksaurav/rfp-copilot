@@ -56,11 +56,5 @@ public class PromptTemplates {
            """;
     }
 
-    public static String getRequirementChatPrompt() {
-        return """
-            You are a good assistant who has access to RAG database of Term of Reference. Provide a detailed response to the user question:
-        """;
-    }
-
 
 }
