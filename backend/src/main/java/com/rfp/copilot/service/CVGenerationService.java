@@ -11,6 +11,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.rfp.copilot.entity.Employee;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -21,7 +22,7 @@ public class CVGenerationService {
     private final ChatModel chatModel;
     private final EmployeeSelectionService employeeSelectionService;
 
-    public CVGenerationService(ChatModel chatModel,
+    public CVGenerationService(@Qualifier("openAiChatModel") ChatModel chatModel,
                                EmployeeSelectionService employeeSelectionService) {
         this.chatModel = chatModel;
         this.employeeSelectionService = employeeSelectionService;
