@@ -47,8 +47,8 @@ public class EmployeeSelectionService {
                 .collect(Collectors.joining());
     }
 
-    public List<Employee> fetchEmployees() {
-        String experiences = extractExperiencesFromTor("Dummy", PromptTemplates.generateExperienceAndTeamCompositionPrompt());
+    public List<Employee> fetchEmployees(String sourceFilter) {
+        String experiences = extractExperiencesFromTor(sourceFilter, PromptTemplates.generateExperienceAndTeamCompositionPrompt());
 
         System.out.println("########### Experiences ############");
         System.out.println(experiences);
