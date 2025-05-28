@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useCallback } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import {useCallback, useState} from "react";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import {cn} from "@/lib/utils";
 
 export default function FileUpload() {
   const [file, setFile] = useState(null);
