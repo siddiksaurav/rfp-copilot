@@ -38,7 +38,7 @@ public class DataLoader {
         Integer count = jdbcClient.sql(Constants.EMPTY_VECTOR_DB_CHECK_QUERY).query(Integer.class).single();
         if (count == 0) {
             logger.info("No vector store found");
-            loadPdfToVectorStore(dataPdf, "rfp_document_benbeis.pdf");
+            loadPdfToVectorStore(dataPdf, "rfp_document_banbeis.pdf");
             logger.info("Loaded all PDFs into vector store");
         }
     }
