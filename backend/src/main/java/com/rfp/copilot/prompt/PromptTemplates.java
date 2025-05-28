@@ -33,6 +33,18 @@ public class PromptTemplates {
            """;
     }
 
+    public static String getWorkSchedulePrompt() {
+        return """
+                Based on the Terms of Reference in the RFP, extract all mentioned software modules, components, and key functional features required for the proposed solution. Focus only on technical deliverables and grouped features if listed.
+        """;
+    }
+
+    public static String getRequirementChatPrompt() {
+        return """
+            You are a good assistant who has access to RAG database of Term of Reference. Provide a detailed response to the user question:
+        """;
+    }
+
     public static String generateExperienceAndTeamCompositionPrompt() {
         return """
                - Spring boot, UI/UX, Fullstack, Tester, Mobile Developer
@@ -42,12 +54,6 @@ public class PromptTemplates {
                - Composition of key personnel (e.g., Project Manager, Full Stack Developer, Software Engineer, iOS Developer, Tester)
                - Any prior relevant project experience or case studies.
            """;
-    }
-
-    public static String getRequirementChatPrompt() {
-        return """
-            You are a good assistant who has access to RAG database of Term of Reference. Provide a detailed response to the user question:
-        """;
     }
 
 
