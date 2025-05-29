@@ -3,20 +3,10 @@
 import {useEffect, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
-import {
-    Calendar,
-    CalendarDays,
-    Clock,
-    Download,
-    FileText,
-    Loader2,
-    Printer,
-    RefreshCw,
-    ZoomIn,
-    ZoomOut
-} from 'lucide-react';
+import {Calendar, CalendarDays, Clock, Download, FileText, Loader2, RefreshCw, ZoomIn, ZoomOut} from 'lucide-react';
 import {parseRequirementResponse} from "../lib/utils";
 import FloatingChat from "./chat/FloatingChat";
+import jsPDF from 'jspdf';
 
 export default function WorkScheduleClient({ torName }) {
   const [schedule, setSchedule] = useState('');
@@ -56,7 +46,85 @@ export default function WorkScheduleClient({ torName }) {
   };
 
   const handlePrint = () => {
-    window.print();
+    // window.print();
+      const markdownToHTML = (markdown) => {
+          return markdown
+              // Headers
+              .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+              .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+              .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+              // Bold text
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/__(.*?)__/g, '<strong>$1</strong>')
+              // Italic text
+              .replace(/\*(.*?)\*/g, '<em>$1</em>')
+              .replace(/_(.*?)_/g, '<em>$1</em>')
+              // Code blocks
+              .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+              .replace(/`(.*?)`/g, '<code>$1</code>')
+              // Lists
+              .replace(/^\* (.*$)/gm, '<li>$1</li>')
+              .replace(/^- (.*$)/gm, '<li>$1</li>')
+              // Line breaks
+              .replace(/\n/g, '<br>');
+      };
+
+      // Wrap list items in ul tags
+      let html = markdownToHTML(schedule);
+      html = html.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
+      // Fix nested ul tags
+      html = html.replace(/<\/ul>\s*<ul>/g, '');
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+    <html>
+      <head>
+        <title>Work Schedule - ${torName || 'default'}</title>
+        <style>
+          @media print {
+            body { margin: 0.5in; }
+            @page { margin: 0.5in; }
+          }
+          body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: none;
+          }
+          h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+          h2 { color: #34495e; margin-top: 30px; }
+          h3 { color: #7f8c8d; margin-top: 20px; }
+          code { 
+            background-color: #f8f9fa; 
+            padding: 2px 4px; 
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+          }
+          pre { 
+            background-color: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+            overflow-x: auto;
+          }
+          ul { margin: 10px 0; }
+          li { margin: 5px 0; }
+          strong { color: #2c3e50; }
+        </style>
+      </head>
+      <body>
+        <div id="content">${html}</div>
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 250);
+          }
+        </script>
+      </body>
+    </html>
+  `);
+      printWindow.document.close();
   };
 
   const handleShare = async () => {
@@ -77,16 +145,79 @@ export default function WorkScheduleClient({ torName }) {
     }
   };
 
-  const downloadAsText = () => {
-    const blob = new Blob([schedule], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `work-schedule-${torName || 'default'}-${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+  const downloadAsPdf = () => {
+      const doc = new jsPDF();
+      let yPosition = 20;
+      const lineHeight = 7;
+      const pageHeight = doc.internal.pageSize.height;
+
+      const parseMarkdownToPDF = (text) => {
+          const lines = text.split('\n');
+
+          lines.forEach(line => {
+              // Check if we need a new page
+              if (yPosition > pageHeight - 20) {
+                  doc.addPage();
+                  yPosition = 20;
+              }
+
+              // Handle headers
+              if (line.startsWith('### ')) {
+                  doc.setFontSize(14);
+                  doc.setFont(undefined, 'bold');
+                  doc.text(line.substring(4), 10, yPosition);
+                  yPosition += lineHeight + 2;
+              } else if (line.startsWith('## ')) {
+                  doc.setFontSize(16);
+                  doc.setFont(undefined, 'bold');
+                  doc.text(line.substring(3), 10, yPosition);
+                  yPosition += lineHeight + 3;
+              } else if (line.startsWith('# ')) {
+                  doc.setFontSize(18);
+                  doc.setFont(undefined, 'bold');
+                  doc.text(line.substring(2), 10, yPosition);
+                  yPosition += lineHeight + 4;
+              }
+              // Handle bold text **text**
+              else if (line.includes('**')) {
+                  doc.setFontSize(12);
+                  doc.setFont(undefined, 'bold');
+                  const cleanLine = line.replace(/\*\*/g, '');
+                  const wrappedLines = doc.splitTextToSize(cleanLine, 180);
+                  wrappedLines.forEach(wrappedLine => {
+                      doc.text(wrappedLine, 10, yPosition);
+                      yPosition += lineHeight;
+                  });
+              }
+              // Handle bullet points
+              else if (line.startsWith('- ') || line.startsWith('* ')) {
+                  doc.setFontSize(12);
+                  doc.setFont(undefined, 'normal');
+                  const bulletText = '• ' + line.substring(2);
+                  const wrappedLines = doc.splitTextToSize(bulletText, 170);
+                  wrappedLines.forEach(wrappedLine => {
+                      doc.text(wrappedLine, 15, yPosition);
+                      yPosition += lineHeight;
+                  });
+              }
+              // Regular text
+              else if (line.trim()) {
+                  doc.setFontSize(12);
+                  doc.setFont(undefined, 'normal');
+                  const wrappedLines = doc.splitTextToSize(line, 180);
+                  wrappedLines.forEach(wrappedLine => {
+                      doc.text(wrappedLine, 10, yPosition);
+                      yPosition += lineHeight;
+                  });
+              } else {
+                  // Empty line - add spacing
+                  yPosition += lineHeight / 2;
+              }
+          });
+      };
+
+      parseMarkdownToPDF(schedule);
+      doc.save(`work-schedule-${torName || 'default'}-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   return (
@@ -185,13 +316,13 @@ export default function WorkScheduleClient({ torName }) {
 
                                       <div className="w-px h-6 bg-gray-300 mx-2"></div>
 
-                                      <button
-                                          onClick={handlePrint}
-                                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                      >
-                                          <Printer className="w-4 h-4 mr-2" />
-                                          Print
-                                      </button>
+                                      {/*<button*/}
+                                      {/*    onClick={handlePrint}*/}
+                                      {/*    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"*/}
+                                      {/*>*/}
+                                      {/*    <Printer className="w-4 h-4 mr-2" />*/}
+                                      {/*    Print*/}
+                                      {/*</button>*/}
 
                                       {/*<button*/}
                                       {/*    onClick={handleShare}*/}
@@ -202,7 +333,7 @@ export default function WorkScheduleClient({ torName }) {
                                       {/*</button>*/}
 
                                       <button
-                                          onClick={downloadAsText}
+                                          onClick={downloadAsPdf}
                                           className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                       >
                                           <Download className="w-4 h-4 mr-2" />
