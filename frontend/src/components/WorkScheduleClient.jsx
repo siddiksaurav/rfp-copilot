@@ -4,19 +4,19 @@ import {useEffect, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import {
-  Calendar,
-  CalendarDays,
-  Clock,
-  Download,
-  FileText,
-  Loader2,
-  Printer,
-  RefreshCw,
-  Share2,
-  ZoomIn,
-  ZoomOut
+    Calendar,
+    CalendarDays,
+    Clock,
+    Download,
+    FileText,
+    Loader2,
+    Printer,
+    RefreshCw,
+    ZoomIn,
+    ZoomOut
 } from 'lucide-react';
 import {parseRequirementResponse} from "../lib/utils";
+import FloatingChat from "./chat/FloatingChat";
 
 export default function WorkScheduleClient({ torName }) {
   const [schedule, setSchedule] = useState('');
@@ -90,165 +90,168 @@ export default function WorkScheduleClient({ torName }) {
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-          >
-            <div className="flex items-center justify-between bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
-                  <Calendar className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Work Schedule Generator</h1>
-                  <div className="flex items-center gap-4 mt-1">
-                    <p className="text-gray-600">
-                      {torName ? `Source: ${torName}` : 'Default Source'}
-                    </p>
-                    {lastUpdated && (
-                        <span className="text-sm text-gray-500">
+      <div>
+          <FloatingChat/>
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+              <div className="max-w-6xl mx-auto">
+                  {/* Header */}
+                  <motion.div
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-8"
+                  >
+                      <div className="flex items-center justify-between bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                          <div className="flex items-center gap-4">
+                              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
+                                  <Calendar className="w-6 h-6 text-white" />
+                              </div>
+                              <div>
+                                  <h1 className="text-2xl font-bold text-gray-900">Work Schedule Generator</h1>
+                                  <div className="flex items-center gap-4 mt-1">
+                                      <p className="text-gray-600">
+                                          {torName ? `Source: ${torName}` : 'Default Source'}
+                                      </p>
+                                      {lastUpdated && (
+                                          <span className="text-sm text-gray-500">
                       Updated: {lastUpdated.toLocaleTimeString()}
                     </span>
-                    )}
-                  </div>
-                </div>
-              </div>
+                                      )}
+                                  </div>
+                              </div>
+                          </div>
 
-              <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                 <Clock className="w-4 h-4 mr-1" />
-                {schedule ? 'Generated' : 'Pending'}
+                  {schedule ? 'Generated' : 'Pending'}
               </span>
-                <button
-                    onClick={() => fetchSchedule(torName)}
-                    disabled={loading}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Regenerate
-                </button>
-              </div>
-            </div>
-          </motion.div>
-
-          {loading ? (
-              <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-center justify-center py-20"
-              >
-                <div className="text-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-                  <p className="text-gray-600">Generating work schedule...</p>
-                  <p className="text-sm text-gray-500 mt-2">This may take a few moments</p>
-                </div>
-              </motion.div>
-          ) : (
-              <>
-                {/* Controls */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="mb-6"
-                >
-                  <div className="flex items-center justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-md">
-                        <CalendarDays className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm font-medium text-gray-700">Schedule Document</span>
+                              <button
+                                  onClick={() => fetchSchedule(torName)}
+                                  disabled={loading}
+                                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                                  Regenerate
+                              </button>
+                          </div>
                       </div>
-                    </div>
+                  </motion.div>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                          onClick={handleZoomOut}
-                          className="inline-flex items-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        <ZoomOut className="w-4 h-4" />
-                      </button>
-                      <span className="text-sm text-gray-600 px-2 min-w-[60px] text-center">
-                    {zoomLevel}%
-                  </span>
-                      <button
-                          onClick={handleZoomIn}
-                          className="inline-flex items-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        <ZoomIn className="w-4 h-4" />
-                      </button>
-
-                      <div className="w-px h-6 bg-gray-300 mx-2"></div>
-
-                      <button
-                          onClick={handlePrint}
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        <Printer className="w-4 h-4 mr-2" />
-                        Print
-                      </button>
-
-                      <button
-                          onClick={handleShare}
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        Share
-                      </button>
-
-                      <button
-                          onClick={downloadAsText}
-                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Schedule Display */}
-                <AnimatePresence mode="wait">
-                  {schedule ? (
-                      <motion.div
-                          key="schedule"
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.3 }}
-                          className="flex justify-center"
-                      >
-                        <ScheduleDocument
-                            schedule={schedule}
-                            zoomLevel={zoomLevel}
-                            source={torName}
-                        />
-                      </motion.div>
-                  ) : (
+                  {loading ? (
                       <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="text-center py-20"
+                          className="flex items-center justify-center py-20"
                       >
-                        <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No Schedule Generated</h3>
-                        <p className="text-gray-600 mb-4">Click "Regenerate" to create a work schedule for the selected source.</p>
-                        <button
-                            onClick={() => fetchSchedule(torName)}
-                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                          <Calendar className="w-4 h-4 mr-2" />
-                          Generate Schedule
-                        </button>
+                          <div className="text-center">
+                              <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+                              <p className="text-gray-600">Generating work schedule...</p>
+                              <p className="text-sm text-gray-500 mt-2">This may take a few moments</p>
+                          </div>
                       </motion.div>
+                  ) : (
+                      <>
+                          {/* Controls */}
+                          <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.1 }}
+                              className="mb-6"
+                          >
+                              <div className="flex items-center justify-between bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                                  <div className="flex items-center gap-2">
+                                      <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-md">
+                                          <CalendarDays className="w-4 h-4 text-gray-600" />
+                                          <span className="text-sm font-medium text-gray-700">Schedule Document</span>
+                                      </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                      <button
+                                          onClick={handleZoomOut}
+                                          className="inline-flex items-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                      >
+                                          <ZoomOut className="w-4 h-4" />
+                                      </button>
+                                      <span className="text-sm text-gray-600 px-2 min-w-[60px] text-center">
+                    {zoomLevel}%
+                  </span>
+                                      <button
+                                          onClick={handleZoomIn}
+                                          className="inline-flex items-center px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                      >
+                                          <ZoomIn className="w-4 h-4" />
+                                      </button>
+
+                                      <div className="w-px h-6 bg-gray-300 mx-2"></div>
+
+                                      <button
+                                          onClick={handlePrint}
+                                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                      >
+                                          <Printer className="w-4 h-4 mr-2" />
+                                          Print
+                                      </button>
+
+                                      {/*<button*/}
+                                      {/*    onClick={handleShare}*/}
+                                      {/*    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"*/}
+                                      {/*>*/}
+                                      {/*    <Share2 className="w-4 h-4 mr-2" />*/}
+                                      {/*    Share*/}
+                                      {/*</button>*/}
+
+                                      <button
+                                          onClick={downloadAsText}
+                                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                      >
+                                          <Download className="w-4 h-4 mr-2" />
+                                          Download
+                                      </button>
+                                  </div>
+                              </div>
+                          </motion.div>
+
+                          {/* Schedule Display */}
+                          <AnimatePresence mode="wait">
+                              {schedule ? (
+                                  <motion.div
+                                      key="schedule"
+                                      initial={{ opacity: 0, scale: 0.95 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.95 }}
+                                      transition={{ duration: 0.3 }}
+                                      className="flex justify-center"
+                                  >
+                                      <ScheduleDocument
+                                          schedule={schedule}
+                                          zoomLevel={zoomLevel}
+                                          source={torName}
+                                      />
+                                  </motion.div>
+                              ) : (
+                                  <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      className="text-center py-20"
+                                  >
+                                      <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Schedule Generated</h3>
+                                      <p className="text-gray-600 mb-4">Click "Regenerate" to create a work schedule for the selected source.</p>
+                                      <button
+                                          onClick={() => fetchSchedule(torName)}
+                                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                      >
+                                          <Calendar className="w-4 h-4 mr-2" />
+                                          Generate Schedule
+                                      </button>
+                                  </motion.div>
+                              )}
+                          </AnimatePresence>
+                      </>
                   )}
-                </AnimatePresence>
-              </>
-          )}
-        </div>
+              </div>
+          </div>
       </div>
   );
 }

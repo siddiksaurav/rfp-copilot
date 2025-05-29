@@ -18,6 +18,7 @@ import {
 import {Button} from '../../components/ui/button';
 import {Card, CardContent} from '../../components/ui/card';
 import {Badge} from '../../components/ui/badge';
+import FloatingChat from "./chat/FloatingChat";
 
 export default function ResumeMakerClient({ torName }) {
   const [cvs, setCvs] = useState([]);
@@ -86,162 +87,165 @@ export default function ResumeMakerClient({ torName }) {
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-          >
-            <div className="flex items-center justify-between bg-white rounded-xl shadow-sm p-6 border">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <FileText className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">CV Generator</h1>
-                  <p className="text-gray-600">
-                    {torName ? `Source: ${torName}` : 'Default Source'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="px-3 py-1">
-                  <Users className="w-4 h-4 mr-1" />
-                  {cvs.length} CVs Generated
-                </Badge>
-                <Button
-                    onClick={() => fetchCvs(torName)}
-                    disabled={loading}
-                    variant="outline"
-                    size="sm"
-                >
-                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-
-          {loading ? (
-              <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-center justify-center py-20"
-              >
-                <div className="text-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-                  <p className="text-gray-600">Generating CVs...</p>
-                </div>
-              </motion.div>
-          ) : (
-              <>
-                {/* Controls */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="mb-6"
-                >
-                  <div className="flex items-center justify-between bg-white rounded-lg shadow-sm p-4 border">
-                    <div className="flex items-center gap-2">
-                      <Button
-                          onClick={() => setViewMode(viewMode === 'single' ? 'all' : 'single')}
-                          variant="outline"
-                          size="sm"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        {viewMode === 'single' ? 'View All' : 'Single View'}
-                      </Button>
-
-                      {viewMode === 'single' && cvs.length > 1 && (
-                          <div className="flex items-center gap-2 ml-4">
-                            <Button
-                                onClick={prevPage}
-                                disabled={currentPage === 0}
-                                variant="outline"
-                                size="sm"
-                            >
-                              <ChevronLeft className="w-4 h-4" />
-                            </Button>
-                            <span className="text-sm text-gray-600 px-3">
-                        {currentPage + 1} of {cvs.length}
-                      </span>
-                            <Button
-                                onClick={nextPage}
-                                disabled={currentPage === cvs.length - 1}
-                                variant="outline"
-                                size="sm"
-                            >
-                              <ChevronRight className="w-4 h-4" />
-                            </Button>
+      <div>
+          <FloatingChat/>
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+              <div className="max-w-7xl mx-auto">
+                  {/* Header */}
+                  <motion.div
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-8"
+                  >
+                      <div className="flex items-center justify-between bg-white rounded-xl shadow-sm p-6 border">
+                          <div className="flex items-center gap-4">
+                              <div className="p-3 bg-blue-100 rounded-lg">
+                                  <FileText className="w-6 h-6 text-blue-600" />
+                              </div>
+                              <div>
+                                  <h1 className="text-2xl font-bold text-gray-900">CV Generator</h1>
+                                  <p className="text-gray-600">
+                                      {torName ? `Source: ${torName}` : 'Default Source'}
+                                  </p>
+                              </div>
                           </div>
-                      )}
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                      <Button onClick={handleZoomOut} variant="outline" size="sm">
-                        <ZoomOut className="w-4 h-4" />
-                      </Button>
-                      <span className="text-sm text-gray-600 px-2 min-w-[60px] text-center">
-                    {zoomLevel}%
-                  </span>
-                      <Button onClick={handleZoomIn} variant="outline" size="sm">
-                        <ZoomIn className="w-4 h-4" />
-                      </Button>
-                      <Button onClick={downloadPdf} className="ml-4">
-                        <Download className="w-4 h-4 mr-2" />
-                        Download PDF
-                      </Button>
-                    </div>
-                  </div>
-                </motion.div>
+                          <div className="flex items-center gap-2">
+                              <Badge variant="secondary" className="px-3 py-1">
+                                  <Users className="w-4 h-4 mr-1" />
+                                  {cvs.length} CVs Generated
+                              </Badge>
+                              <Button
+                                  onClick={() => fetchCvs(torName)}
+                                  disabled={loading}
+                                  variant="outline"
+                                  size="sm"
+                              >
+                                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                                  Refresh
+                              </Button>
+                          </div>
+                      </div>
+                  </motion.div>
 
-                {/* CV Display */}
-                <AnimatePresence mode="wait">
-                  {cvs.length > 0 ? (
-                      <motion.div
-                          key={viewMode}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.3 }}
-                          className="space-y-6"
-                      >
-                        {viewMode === 'single' ? (
-                            <CVDocument
-                                cv={cvs[currentPage]}
-                                zoomLevel={zoomLevel}
-                                pageNumber={currentPage + 1}
-                            />
-                        ) : (
-                            cvs.map((cv, index) => (
-                                <CVDocument
-                                    key={index}
-                                    cv={cv}
-                                    zoomLevel={zoomLevel}
-                                    pageNumber={index + 1}
-                                />
-                            ))
-                        )}
-                      </motion.div>
-                  ) : (
+                  {loading ? (
                       <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="text-center py-20"
+                          className="flex items-center justify-center py-20"
                       >
-                        <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No CVs Generated</h3>
-                        <p className="text-gray-600">Click refresh to generate CVs for the selected source.</p>
+                          <div className="text-center">
+                              <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+                              <p className="text-gray-600">Generating CVs...</p>
+                          </div>
                       </motion.div>
+                  ) : (
+                      <>
+                          {/* Controls */}
+                          <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.1 }}
+                              className="mb-6"
+                          >
+                              <div className="flex items-center justify-between bg-white rounded-lg shadow-sm p-4 border">
+                                  <div className="flex items-center gap-2">
+                                      <Button
+                                          onClick={() => setViewMode(viewMode === 'single' ? 'all' : 'single')}
+                                          variant="outline"
+                                          size="sm"
+                                      >
+                                          <Eye className="w-4 h-4 mr-2" />
+                                          {viewMode === 'single' ? 'View All' : 'Single View'}
+                                      </Button>
+
+                                      {viewMode === 'single' && cvs.length > 1 && (
+                                          <div className="flex items-center gap-2 ml-4">
+                                              <Button
+                                                  onClick={prevPage}
+                                                  disabled={currentPage === 0}
+                                                  variant="outline"
+                                                  size="sm"
+                                              >
+                                                  <ChevronLeft className="w-4 h-4" />
+                                              </Button>
+                                              <span className="text-sm text-gray-600 px-3">
+                        {currentPage + 1} of {cvs.length}
+                      </span>
+                                              <Button
+                                                  onClick={nextPage}
+                                                  disabled={currentPage === cvs.length - 1}
+                                                  variant="outline"
+                                                  size="sm"
+                                              >
+                                                  <ChevronRight className="w-4 h-4" />
+                                              </Button>
+                                          </div>
+                                      )}
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                      <Button onClick={handleZoomOut} variant="outline" size="sm">
+                                          <ZoomOut className="w-4 h-4" />
+                                      </Button>
+                                      <span className="text-sm text-gray-600 px-2 min-w-[60px] text-center">
+                    {zoomLevel}%
+                  </span>
+                                      <Button onClick={handleZoomIn} variant="outline" size="sm">
+                                          <ZoomIn className="w-4 h-4" />
+                                      </Button>
+                                      <Button onClick={downloadPdf} className="ml-4">
+                                          <Download className="w-4 h-4 mr-2" />
+                                          Download PDF
+                                      </Button>
+                                  </div>
+                              </div>
+                          </motion.div>
+
+                          {/* CV Display */}
+                          <AnimatePresence mode="wait">
+                              {cvs.length > 0 ? (
+                                  <motion.div
+                                      key={viewMode}
+                                      initial={{ opacity: 0, scale: 0.95 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.95 }}
+                                      transition={{ duration: 0.3 }}
+                                      className="space-y-6"
+                                  >
+                                      {viewMode === 'single' ? (
+                                          <CVDocument
+                                              cv={cvs[currentPage]}
+                                              zoomLevel={zoomLevel}
+                                              pageNumber={currentPage + 1}
+                                          />
+                                      ) : (
+                                          cvs.map((cv, index) => (
+                                              <CVDocument
+                                                  key={index}
+                                                  cv={cv}
+                                                  zoomLevel={zoomLevel}
+                                                  pageNumber={index + 1}
+                                              />
+                                          ))
+                                      )}
+                                  </motion.div>
+                              ) : (
+                                  <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      className="text-center py-20"
+                                  >
+                                      <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                                      <h3 className="text-lg font-medium text-gray-900 mb-2">No CVs Generated</h3>
+                                      <p className="text-gray-600">Click refresh to generate CVs for the selected source.</p>
+                                  </motion.div>
+                              )}
+                          </AnimatePresence>
+                      </>
                   )}
-                </AnimatePresence>
-              </>
-          )}
-        </div>
+              </div>
+          </div>
       </div>
   );
 }
