@@ -29,13 +29,13 @@ const LandingPage = () => {
     {
       icon: <Search className="w-8 h-8"/>,
       title: "Opportunity Matcher",
-      description: "Filters all tenders and finds those that match your company's domain, capabilities, and budget—streamlining hours of manual monitoring.",
+      description: "Intelligently filters through all available tenders to identify those that align with your company’s domain expertise, budget constraints—eliminating hours of manual review and ensuring you never miss a relevant opportunity.",
       color: "from-blue-500 to-cyan-500"
     },
     {
       icon: <FileText className="w-8 h-8"/>,
       title: "Requirement Extractor",
-      description: "Instantly pulls out deadlines, evaluation criteria, and required documents from uploaded RFP PDFs.",
+      description: "Quickly extracts and organizes essential details from uploaded RFPs—such as submission deadlines, evaluation criteria, and required documents—to accelerate decision-making and simplify proposal preparation.",
       color: "from-purple-500 to-pink-500"
     },
     {
@@ -144,7 +144,7 @@ const LandingPage = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              AI-powered agent that helps tech companies win more government tenders by focusing on strategy—not
+              AI-powered agent that helps companies win more government tenders by focusing on strategy—not
               paperwork
             </p>
           </motion.div>
@@ -324,7 +324,7 @@ const LandingPage = () => {
               Ready to Transform Your RFP Process?
             </h2>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join hundreds of tech companies already winning more tenders with RFP Copilot
+              Join hundreds of companies already winning more tenders with RFP Copilot
             </p>
             <motion.button
               className="bg-gradient-to-r from-blue-500 to-purple-600 px-10 py-5 rounded-full text-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-2xl hover:shadow-3xl flex items-center gap-3 mx-auto"
@@ -346,7 +346,7 @@ const LandingPage = () => {
             RFP Copilot
           </div>
           <p className="text-gray-400 mb-6">
-            Empowering tech companies to win more government tenders with AI
+            Empowering companies to win more government tenders with AI
           </p>
           <div className="flex justify-center space-x-8 text-gray-400">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
